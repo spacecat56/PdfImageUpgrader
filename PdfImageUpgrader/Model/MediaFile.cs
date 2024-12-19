@@ -12,6 +12,9 @@ namespace PdfImageUpgrader.Model
         public static Regex SeqNoRex = new Regex(@".*?image(?<nbr>\d+)[.].+");
         public FileInfo TheFile { get; set; } = f;
         public int SortNo { get; private set; }
+        public bool OkToApply { get; set; }
+        public PdfImage Target { get; set; }
+
         public string Name => TheFile.Name;
         private Size? theSize;
         public Size GetSize()

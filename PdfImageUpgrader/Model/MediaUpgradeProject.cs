@@ -55,6 +55,7 @@ namespace PdfImageUpgrader.Model
         public string UpgradePdf()
         {
             StringBuilder rvs = new StringBuilder();
+            PdfWrangler.OutputPdf = OutputPdf;
             (int ri, rvs) = PdfWrangler.UpgradeImages(MediaFiles, rvs);
             return rvs.ToString();
         }

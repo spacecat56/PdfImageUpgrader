@@ -82,7 +82,7 @@ namespace PdfImageUpgrader.Model
                 if (i + 1 > Images.Count)
                 {
                     rvs.AppendLine($"\tNo match in pdf");
-                    rvb = false;
+                    rvb = mf.OkToApply = false;
                     continue;
                 }
 
@@ -90,6 +90,9 @@ namespace PdfImageUpgrader.Model
                 float rel = mf.GetSize().Width / pim.Width;
                 bool goodAr = Math.Abs(mf.Aspect() - pim.Aspect) < 0.002f;
                 rvb &= goodAr;
+                mf.OkToApply = goodAr;
+                if (goodAr)
+                    mf.Target = pim;
                 rvs.AppendLine($"\tPDF image p. {pim.Page}, {pim.Name} {pim.Width:0.0}x{pim.Height:0.0} AR {pim.Aspect}: match: {goodAr}; Upgrade res: {rel:0.##}");
             }
 
@@ -107,15 +110,21 @@ namespace PdfImageUpgrader.Model
             for (int i = 0; i < medias.Count; i++)
             {
                 MediaFile mf = medias[i];
-                rvs.AppendLine($"Media file {mf.Name} {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
-                if (i + 1 > Images.Count)
+                rvs.AppendLine($"Media file {mf.Name}; {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
+                //if (i + 1 > Images.Count)
+                //{
+                //    rvs.AppendLine($"\tNo match in pdf");
+                //    continue;
+                //}
+
+                bool goodToGo = mf.OkToApply && mf.Target != null;
+                if (!goodToGo)
                 {
-                    rvs.AppendLine($"\tNo match in pdf");
+                    rvs.AppendLine("...skipped");
                     continue;
                 }
 
-
-                PdfImage pim = Images[i];
+                PdfImage pim = mf.Target; //Images[i];
                 PdfPage page = pdfDoc.GetPage(pim.Page);
                 PdfDictionary pageDict = page.GetPdfObject();
                 PdfDictionary resources = pageDict.GetAsDictionary(PdfName.Resources);

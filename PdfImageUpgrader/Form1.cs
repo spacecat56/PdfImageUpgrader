@@ -141,6 +141,7 @@ namespace PdfImageUpgrader
         {
             try
             {
+                _project.OutputPdf = tePathPdfOut.Text;
                 string result = _project.UpgradePdf();
                 Log(result);
             }
