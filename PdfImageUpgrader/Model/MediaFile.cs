@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PdfImageUpgrader.Model
 {
     internal class MediaFile(FileInfo f)
     {
+        public static Regex SeqNoRex = new Regex(@".*?image(?<nbr>\d+)[.].+");
         public FileInfo TheFile { get; set; } = f;
+        public int SortNo { get; private set; }
         public string Name => TheFile.Name;
         private Size? theSize;
         public Size GetSize()
@@ -23,6 +26,15 @@ namespace PdfImageUpgrader.Model
             return theSize.Value;
         }
 
+        public MediaFile Init()
+        {
+            var m = SeqNoRex.Match(TheFile.Name);
+            if (m.Success)
+                SortNo = int.Parse(m.Groups["nbr"].Value);
+
+            return this;
+        }
+
         public float Aspect()
         {
             GetSize();
@@ -35,12 +47,11 @@ namespace PdfImageUpgrader.Model
     {
         public MediaFiles(DirectoryInfo mediaDir)
         {
-            List<FileInfo> medias = mediaDir.EnumerateFiles().Where(f => MediaUpgradeProject.AnyMediaRex.IsMatch(f.Name))
-                .OrderBy(f => f.Name).ToList();
-            foreach (FileInfo fileInfo in medias)
-            {
-                Add(new MediaFile(fileInfo));
-            }
+            List<MediaFile> medias = mediaDir.EnumerateFiles()
+                .Where(f => MediaUpgradeProject.AnyMediaRex.IsMatch(f.Name))
+                .Select(o => new MediaFile(o).Init())
+                .OrderBy(f => f.SortNo).ToList();
+            AddRange(medias);
         }
     }
 }

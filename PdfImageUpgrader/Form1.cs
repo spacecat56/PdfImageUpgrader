@@ -41,7 +41,20 @@ namespace PdfImageUpgrader
         {
             try
             {
-                //
+                OpenFileDialog ofd = new OpenFileDialog()
+                {
+                    Title = "Choose input pdf; MUST match docx",
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    Multiselect = false
+                };
+                if (!string.IsNullOrWhiteSpace(tePathPdfIn.Text))
+                    ofd.InitialDirectory = Path.GetDirectoryName(tePathPdfIn.Text);
+                else if (workingDir != null)
+                    ofd.InitialDirectory = workingDir;
+                if (ofd.ShowDialog() != DialogResult.OK)
+                    return;
+                tePathPdfIn.Text = ofd.FileName;
+                tePathPdfOut.Text = Path.ChangeExtension(ofd.FileName, "_upgraded.pdf");
             }
             catch (Exception ex)
             {
@@ -72,7 +85,19 @@ namespace PdfImageUpgrader
         {
             try
             {
-                //
+                SaveFileDialog sfd = new SaveFileDialog()
+                {
+                    Title = "Choose output pdf;",
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    CheckFileExists = true
+                };
+                if (!string.IsNullOrWhiteSpace(tePathPdfOut.Text))
+                    sfd.InitialDirectory = Path.GetDirectoryName(tePathPdfOut.Text);
+                else if (workingDir != null)
+                    sfd.InitialDirectory = workingDir;
+                if (sfd.ShowDialog() != DialogResult.OK)
+                    return;
+                tePathPdfOut.Text = sfd.FileName;
             }
             catch (Exception ex)
             {
