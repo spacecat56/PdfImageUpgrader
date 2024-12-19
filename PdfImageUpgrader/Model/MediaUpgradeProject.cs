@@ -13,6 +13,8 @@ namespace PdfImageUpgrader.Model
         public string InputPdf { get; set; }
         public string MediaDir { get; set; }
         public string OutputPdf { get; set; }
+        public bool Valid { get; private set; }
+
 
         public DocxWrangler DocxWrangler { get; private set; }
         public MediaFiles MediaFiles { get; private set; }
@@ -39,8 +41,14 @@ namespace PdfImageUpgrader.Model
                 OutputPdf = OutputPdf
             };
 
-            string result = $"{PdfWrangler.LocateImages()} images found in pdf";
-            return result;
+            int c = PdfWrangler.LocateImages();
+            StringBuilder rvs = new StringBuilder();
+            rvs.AppendLine($"{c} images found in pdf");
+
+            (bool rvb, rvs) = PdfWrangler.VerifyImages(MediaFiles, rvs);
+            Valid = rvb;
+
+            return rvs.ToString();
         }
 
     }

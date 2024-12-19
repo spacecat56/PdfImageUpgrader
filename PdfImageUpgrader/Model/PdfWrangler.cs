@@ -63,6 +63,33 @@ namespace PdfImageUpgrader.Model
             return Images.Count;
         }
 
+
+        public (bool, StringBuilder) VerifyImages(MediaFiles medias, StringBuilder rvs)
+        {
+            bool rvb = true;
+            rvs ??= new StringBuilder();
+
+            for (int i = 0; i < medias.Count; i++)
+            {
+                MediaFile mf = medias[i];
+                rvs.AppendLine($"Media file {mf.Name} {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
+                if (i + 1 > Images.Count)
+                {
+                    rvs.AppendLine($"\tNo match in pdf");
+                    rvb = false;
+                    continue;
+                }
+
+                PdfImage pim = Images[i];
+                float rel = mf.GetSize().Width / pim.Width;
+                bool goodAr = Math.Abs(mf.Aspect() - pim.Aspect) < 0.002f;
+                rvb &= goodAr;
+                rvs.AppendLine($"\tPDF image p. {pim.Page}, {pim.Name} {pim.Width:0.0}x{pim.Height:0.0} AR {pim.Aspect}: match: {goodAr}; Upgrade res: {rel:0.##}");
+            }
+
+            return (rvb, rvs);
+        }
+
     }
 
     internal class PdfImage
@@ -72,6 +99,8 @@ namespace PdfImageUpgrader.Model
         public float Width { get; set; }
         public float Height { get; set; }
         public string Name { get; set; }
+
+        public float Aspect => Height == 0 ? 0 : Width / Height;
         //public byte ObjectType { get; set; }
     }
 }

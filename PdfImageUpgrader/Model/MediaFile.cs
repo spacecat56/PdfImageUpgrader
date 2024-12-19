@@ -22,6 +22,13 @@ namespace PdfImageUpgrader.Model
             theSize = new Size(w, h);
             return theSize.Value;
         }
+
+        public float Aspect()
+        {
+            GetSize();
+            if (theSize == null) return 0;
+            return (float)theSize.Value.Width / theSize.Value.Height;
+        }
     }
 
     internal class MediaFiles : List<MediaFile>
