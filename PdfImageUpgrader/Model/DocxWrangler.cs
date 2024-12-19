@@ -13,7 +13,6 @@ namespace PdfImageUpgrader.Model
         public string InputPath { get; set; }
         public string MediaPath { get; set; }
         //public List<> Type { get; set; }
-        private Regex mediaRex = new Regex(".*?word/media/.*?[.](jpg|jpeg|png)");
         public int ExtractMediaFiles()
         {
             int rv = 0;
@@ -22,7 +21,7 @@ namespace PdfImageUpgrader.Model
             using ZipArchive archive = ZipFile.OpenRead(InputPath);
             foreach (ZipArchiveEntry entry in archive.Entries)
             {
-                if (!mediaRex.IsMatch(entry.FullName)) continue;
+                if (!MediaUpgradeProject.DocxMediaRex.IsMatch(entry.FullName)) continue;
                 string destinationPath = Path.GetFullPath(Path.Combine(MediaPath, entry.Name));
                 entry.ExtractToFile(destinationPath, true);
                 rv++;

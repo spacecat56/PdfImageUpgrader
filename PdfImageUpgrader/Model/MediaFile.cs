@@ -28,7 +28,12 @@ namespace PdfImageUpgrader.Model
     {
         public MediaFiles(DirectoryInfo mediaDir)
         {
-
+            List<FileInfo> medias = mediaDir.EnumerateFiles().Where(f => MediaUpgradeProject.AnyMediaRex.IsMatch(f.Name))
+                .OrderBy(f => f.Name).ToList();
+            foreach (FileInfo fileInfo in medias)
+            {
+                Add(new MediaFile(fileInfo));
+            }
         }
     }
 }
