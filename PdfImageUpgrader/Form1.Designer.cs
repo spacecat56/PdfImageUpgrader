@@ -42,6 +42,7 @@
             tePathPdfOut = new TextBox();
             label4 = new Label();
             pbExtractDocxMedia = new Button();
+            pbLocatePdfImages = new Button();
             pbUpgradePdfImages = new Button();
             SuspendLayout();
             // 
@@ -102,6 +103,7 @@
             tePathPdfIn.Name = "tePathPdfIn";
             tePathPdfIn.Size = new Size(680, 27);
             tePathPdfIn.TabIndex = 5;
+            tePathPdfIn.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03.pdf";
             // 
             // label2
             // 
@@ -159,6 +161,7 @@
             tePathPdfOut.Name = "tePathPdfOut";
             tePathPdfOut.Size = new Size(680, 27);
             tePathPdfOut.TabIndex = 11;
+            tePathPdfOut.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03_upgraded.pdf";
             // 
             // label4
             // 
@@ -180,6 +183,17 @@
             pbExtractDocxMedia.UseVisualStyleBackColor = true;
             pbExtractDocxMedia.Click += pbExtractDocxMedia_Click;
             // 
+            // pbLocatePdfImages
+            // 
+            pbLocatePdfImages.Font = new Font("Segoe UI", 18F);
+            pbLocatePdfImages.Location = new Point(313, 193);
+            pbLocatePdfImages.Name = "pbLocatePdfImages";
+            pbLocatePdfImages.Size = new Size(261, 112);
+            pbLocatePdfImages.TabIndex = 14;
+            pbLocatePdfImages.Text = "Locate pdf Images";
+            pbLocatePdfImages.UseVisualStyleBackColor = true;
+            pbLocatePdfImages.Click += pbLocatePdfImages_Click;
+            // 
             // pbUpgradePdfImages
             // 
             pbUpgradePdfImages.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -187,8 +201,8 @@
             pbUpgradePdfImages.Location = new Point(607, 193);
             pbUpgradePdfImages.Name = "pbUpgradePdfImages";
             pbUpgradePdfImages.Size = new Size(261, 112);
-            pbUpgradePdfImages.TabIndex = 14;
-            pbUpgradePdfImages.Text = "Upgrade pdf Images";
+            pbUpgradePdfImages.TabIndex = 15;
+            pbUpgradePdfImages.Text = "Upgrade  pdf Images";
             pbUpgradePdfImages.UseVisualStyleBackColor = true;
             pbUpgradePdfImages.Click += pbUpgradePdfImages_Click;
             // 
@@ -198,6 +212,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(883, 681);
             Controls.Add(pbUpgradePdfImages);
+            Controls.Add(pbLocatePdfImages);
             Controls.Add(pbExtractDocxMedia);
             Controls.Add(pbPickPdfOut);
             Controls.Add(tePathPdfOut);
@@ -236,6 +251,7 @@
         private TextBox tePathPdfOut;
         private Label label4;
         private Button pbExtractDocxMedia;
+        private Button pbLocatePdfImages;
         private Button pbUpgradePdfImages;
     }
 }

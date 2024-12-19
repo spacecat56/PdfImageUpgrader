@@ -4,8 +4,8 @@ namespace PdfImageUpgrader
 {
     public partial class Form1 : Form
     {
-        private string? workingDir;
-        private MediaUpgradeProject? _project;
+        private string workingDir;
+        private MediaUpgradeProject _project;
 
         public Form1()
         {
@@ -58,7 +58,7 @@ namespace PdfImageUpgrader
                     InitialDirectory = workingDir ?? "",
                     Description = "Media folder"
                 };
-                if (fbd.ShowDialog( )!= DialogResult.OK)
+                if (fbd.ShowDialog() != DialogResult.OK)
                     return;
                 tePathMediaTemp.Text = fbd.SelectedPath;
             }
@@ -88,6 +88,22 @@ namespace PdfImageUpgrader
                 _project.InputDocx = tePathDocx.Text;
                 _project.MediaDir = tePathMediaTemp.Text;
                 string result = _project.ExtractFromDocx();
+                Log(result);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex);
+            }
+        }
+
+        private void pbLocatePdfImages_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _project ??= new MediaUpgradeProject();
+                _project.InputPdf = tePathPdfIn.Text;
+                _project.OutputPdf = tePathPdfIn.Text;
+                string result = _project.InitPdf();
                 Log(result);
             }
             catch (Exception ex)

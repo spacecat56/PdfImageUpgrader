@@ -16,6 +16,7 @@ namespace PdfImageUpgrader.Model
 
         public DocxWrangler DocxWrangler { get; private set; }
         public MediaFiles MediaFiles { get; private set; }
+        public PdfWrangler PdfWrangler { get; private set; }
 
         public static Regex DocxMediaRex = new Regex(".*?word/media/.*?[.](jpg|jpeg|png)");
         public static Regex AnyMediaRex = new Regex(".*?[.](jpg|jpeg|png)");
@@ -28,6 +29,18 @@ namespace PdfImageUpgrader.Model
             MediaFiles = new MediaFiles(new DirectoryInfo(MediaDir));
 
             return $"{r} media files extracted from {Path.GetFileName(InputDocx)}";
+        }
+
+        public string InitPdf()
+        {
+            PdfWrangler = new PdfWrangler()
+            {
+                InputPdf = InputPdf,
+                OutputPdf = OutputPdf
+            };
+
+            string result = $"{PdfWrangler.LocateImages()} images found in pdf";
+            return result;
         }
 
     }
