@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Sources;
 
 namespace PdfImageUpgrader.Model
 {
@@ -48,6 +49,13 @@ namespace PdfImageUpgrader.Model
             (bool rvb, rvs) = PdfWrangler.VerifyImages(MediaFiles, rvs);
             Valid = rvb;
 
+            return rvs.ToString();
+        }
+
+        public string UpgradePdf()
+        {
+            StringBuilder rvs = new StringBuilder();
+            (int ri, rvs) = PdfWrangler.UpgradeImages(MediaFiles, rvs);
             return rvs.ToString();
         }
 

@@ -102,7 +102,7 @@ namespace PdfImageUpgrader
             {
                 _project ??= new MediaUpgradeProject();
                 _project.InputPdf = tePathPdfIn.Text;
-                _project.OutputPdf = tePathPdfIn.Text;
+                _project.OutputPdf = tePathPdfOut.Text;
                 string result = _project.InitPdf();
                 Log(result);
             }
@@ -116,7 +116,8 @@ namespace PdfImageUpgrader
         {
             try
             {
-                //
+                string result = _project.UpgradePdf();
+                Log(result);
             }
             catch (Exception ex)
             {
