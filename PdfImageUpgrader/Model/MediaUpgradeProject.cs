@@ -39,7 +39,8 @@ namespace PdfImageUpgrader.Model
             PdfWrangler = new PdfWrangler()
             {
                 InputPdf = InputPdf,
-                OutputPdf = OutputPdf
+                OutputPdf = OutputPdf,
+                MediaDir = MediaDir
             };
 
             int c = PdfWrangler.LocateImages();

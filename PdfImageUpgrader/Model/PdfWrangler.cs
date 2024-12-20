@@ -16,8 +16,10 @@ namespace PdfImageUpgrader.Model
 {
     internal class PdfWrangler
     {
+        public int MinPixels { get; set; } = 1000;
         public string InputPdf { get; set; }
         public string OutputPdf { get; set; }
+        public string MediaDir { get; set; }
 
         public List<PdfImage> Images { get; } = [];
         public StringBuilder DiagnosticInfo { get; set; } = new();
@@ -50,22 +52,75 @@ namespace PdfImageUpgrader.Model
                     PdfStream stream = xObjects.GetAsStream(xObject);
                     PdfImageXObject img = new PdfImageXObject(stream);
 
+                    int pxCount = (int)(img.GetWidth() * img.GetHeight());
+                    if (pxCount < MinPixels)
+                    {
+                        DiagnosticInfo.AppendLine($".......skip image {ix}, {pxCount:F0}px, {xObject.GetValue()}");
+                        continue;
+                    }
+
+                    string mediaFileName = $"p{i:0000}-{ix}_{xObject.GetValue()}.{FileExtensionFor(img.IdentifyImageType())}";
+                    string mPath = Path.Combine(MediaDir, mediaFileName);
+                    byte[] imgbytes = img.GetImageBytes();
+                    using (FileStream fso = new FileStream(mPath, FileMode.Create, FileAccess.Write))
+                    {
+                        fso.Write(imgbytes);
+                    }
+
                     Images.Add(new PdfImage()
                     {
-                        Page = i, 
-                        SeqNbr = Images.Count+1,
+                        Page = i,
+                        SeqNbr = Images.Count + 1,
                         Name = xObject.GetValue(),
                         Width = img.GetWidth(),
                         Height = img.GetHeight(),
-                        IndexOnPage = ix
+                        IndexOnPage = ix,
+                        ImageFilePath = mPath
                     });
-                    DiagnosticInfo.AppendLine($"........{Images.Count}. {xObject.GetValue()}. w={img.GetWidth()}, h={img.GetHeight()}; type={img.IdentifyImageType()}");
+                    DiagnosticInfo.AppendLine($"........{Images.Count}. {xObject.GetValue()}. w={img.GetWidth()}, h={img.GetHeight()}; type={img.IdentifyImageType()}; file={mediaFileName}");
                 }
             }
             pdfDoc.Close();
 
 
             return Images.Count;
+        }
+
+        private string FileExtensionFor(ImageType it)
+        {
+            switch (it)
+            {
+                case ImageType.JPEG:
+                    return "jpg";
+                    break;
+                case ImageType.PNG:
+                    return "png";
+                    break;
+                case ImageType.GIF:
+                    return "gif";
+                    break;
+                case ImageType.BMP:
+                    return "bmp";
+                    break;
+                case ImageType.TIFF:
+                    return "tif";
+                    break;
+                //case ImageType.WMF:
+                //    break;
+                //case ImageType.PS:
+                //    break;
+                case ImageType.JPEG2000:
+                    return "jp2";
+                    break;
+                //case ImageType.JBIG2:
+                //    break;
+                //case ImageType.RAW:
+                //    break;
+                //case ImageType.NONE:
+                //    break;
+                default:
+                    return "unk";
+            }
         }
 
 
@@ -153,12 +208,15 @@ namespace PdfImageUpgrader.Model
 
     internal class PdfImage
     {
+        public static int MinPixels = 1000;
+
         public int Page { get; set; }
         public int SeqNbr { get; set; }
         public int IndexOnPage { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
         public string Name { get; set; }
+        public string ImageFilePath { get; set; }
 
         public float Aspect => Height == 0 ? 0 : Width / Height;
         //public byte ObjectType { get; set; }
