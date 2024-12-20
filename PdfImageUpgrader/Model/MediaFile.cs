@@ -16,6 +16,9 @@ namespace PdfImageUpgrader.Model
         public PdfImage Target { get; set; }
 
         public string Name => TheFile.Name;
+
+        public double ImageMetric { get; set; }
+
         private Size? theSize;
         public Size GetSize()
         {

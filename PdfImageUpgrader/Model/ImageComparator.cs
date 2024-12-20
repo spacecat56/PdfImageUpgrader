@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ImageMagick;
 
 namespace PdfImageUpgrader.Model
 {
     internal class ImageComparator
     {
-        public float MatchCutoff { get; set; } = 0.1f;
+        public double MatchCutoff { get; set; } = 0.1;
+        public ErrorMetric Metric { get; set; } = ErrorMetric.Fuzz;
 
-
-        public (bool, float) Compare(string path1, string path2)
+        public (bool, double) Compare(string smallerFile, string largerFile)
         {
-            throw new NotImplementedException();
+            MagickImage mig1 = new MagickImage(smallerFile);
+            MagickImage mig2 = new MagickImage(largerFile);
+            mig2.Resize(mig1.Width, mig1.Height);
+            double sim = mig1.Compare(mig2, Metric);
+            return (sim <= MatchCutoff, sim);
         }
     }
 }

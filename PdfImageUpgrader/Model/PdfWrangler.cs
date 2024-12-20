@@ -16,10 +16,10 @@ namespace PdfImageUpgrader.Model
 {
     internal class PdfWrangler
     {
-        public int MinPixels { get; set; } = 1000;
         public string InputPdf { get; set; }
         public string OutputPdf { get; set; }
         public string MediaDir { get; set; }
+        public ImageComparator Comparator { get; set; }
 
         public List<PdfImage> Images { get; } = [];
         public StringBuilder DiagnosticInfo { get; set; } = new();
@@ -53,7 +53,7 @@ namespace PdfImageUpgrader.Model
                     PdfImageXObject img = new PdfImageXObject(stream);
 
                     int pxCount = (int)(img.GetWidth() * img.GetHeight());
-                    if (pxCount < MinPixels)
+                    if (pxCount < PdfImage.MinPixels)
                     {
                         DiagnosticInfo.AppendLine($".......skip image {ix}, {pxCount:F0}px, {xObject.GetValue()}");
                         continue;
@@ -126,28 +126,41 @@ namespace PdfImageUpgrader.Model
 
         public (bool, StringBuilder) VerifyImages(MediaFiles medias, StringBuilder rvs)
         {
-            bool rvb = true;
+            bool rvb = false;
             rvs ??= new StringBuilder();
 
+            int ixPdfImage = 0;
             for (int i = 0; i < medias.Count; i++)
             {
                 MediaFile mf = medias[i];
+                mf.Target = null;
+                mf.OkToApply = false;
                 rvs.AppendLine($"Media file {mf.Name} {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
-                if (i + 1 > Images.Count)
+
+                while (ixPdfImage < Images.Count)
+                {
+                    PdfImage pim = Images[ixPdfImage];
+                    float rel = mf.GetSize().Width / pim.Width;
+                    (bool isMatch, double delta) = Comparator.Compare(pim.ImageFilePath, mf.TheFile.FullName);
+                    if (!isMatch)
+                    {
+                        ixPdfImage++;
+                        continue;
+                    }
+                    mf.Target = pim;
+                    mf.ImageMetric = delta;
+                    rvb = mf.OkToApply = true; // any found == ok
+                    rvs.AppendLine($"\tPDF image p. {pim.Page}, {pim.Name} {pim.Width:0.0}x{pim.Height:0.0} AR {pim.Aspect}: Upgrade res: {rel:0.##}");
+                    ixPdfImage++;
+                    break;
+                }
+
+                if (!mf.OkToApply)
                 {
                     rvs.AppendLine($"\tNo match in pdf");
                     rvb = mf.OkToApply = false;
-                    continue;
                 }
 
-                PdfImage pim = Images[i];
-                float rel = mf.GetSize().Width / pim.Width;
-                bool goodAr = Math.Abs(mf.Aspect() - pim.Aspect) < 0.002f;
-                rvb &= goodAr;
-                mf.OkToApply = goodAr;
-                if (goodAr)
-                    mf.Target = pim;
-                rvs.AppendLine($"\tPDF image p. {pim.Page}, {pim.Name} {pim.Width:0.0}x{pim.Height:0.0} AR {pim.Aspect}: match: {goodAr}; Upgrade res: {rel:0.##}");
             }
 
             return (rvb, rvs);
@@ -159,17 +172,11 @@ namespace PdfImageUpgrader.Model
             rvs ??= new StringBuilder();
 
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(InputPdf), new PdfWriter(OutputPdf));
-            //int n = pdfDoc.GetNumberOfPages();
 
             for (int i = 0; i < medias.Count; i++)
             {
                 MediaFile mf = medias[i];
                 rvs.AppendLine($"Media file {mf.Name}; {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
-                //if (i + 1 > Images.Count)
-                //{
-                //    rvs.AppendLine($"\tNo match in pdf");
-                //    continue;
-                //}
 
                 bool goodToGo = mf.OkToApply && mf.Target != null;
                 if (!goodToGo)

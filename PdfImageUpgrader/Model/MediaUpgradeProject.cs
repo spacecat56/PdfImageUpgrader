@@ -40,7 +40,8 @@ namespace PdfImageUpgrader.Model
             {
                 InputPdf = InputPdf,
                 OutputPdf = OutputPdf,
-                MediaDir = MediaDir
+                MediaDir = MediaDir,
+                Comparator = new ImageComparator() // default, with potential to be exposed and configured externally
             };
 
             int c = PdfWrangler.LocateImages();
