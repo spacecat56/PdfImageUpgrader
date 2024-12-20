@@ -48,13 +48,13 @@
             pbUpgradePdfImages = new Button();
             bsMediaFiles = new BindingSource(components);
             dgMediaFiles = new DataGridView();
-            pbViewImages = new Button();
-            toolTip1 = new ToolTip(components);
             docxImageDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             targetPageDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             imageToReplaceDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             ImageMetric = new DataGridViewTextBoxColumn();
             okToApplyDataGridViewCheckBoxColumn = new DataGridViewCheckBoxColumn();
+            pbViewImages = new Button();
+            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)bsMediaFiles).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgMediaFiles).BeginInit();
             SuspendLayout();
@@ -233,22 +233,10 @@
             dgMediaFiles.Columns.AddRange(new DataGridViewColumn[] { docxImageDataGridViewTextBoxColumn, targetPageDataGridViewTextBoxColumn, imageToReplaceDataGridViewTextBoxColumn, ImageMetric, okToApplyDataGridViewCheckBoxColumn });
             dgMediaFiles.DataSource = bsMediaFiles;
             dgMediaFiles.Location = new Point(13, 330);
+            dgMediaFiles.MultiSelect = false;
             dgMediaFiles.Name = "dgMediaFiles";
             dgMediaFiles.Size = new Size(716, 239);
             dgMediaFiles.TabIndex = 16;
-            // 
-            // pbViewImages
-            // 
-            pbViewImages.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pbViewImages.Font = new Font("Segoe UI", 18F);
-            pbViewImages.Location = new Point(738, 330);
-            pbViewImages.Name = "pbViewImages";
-            pbViewImages.Size = new Size(199, 111);
-            pbViewImages.TabIndex = 17;
-            pbViewImages.Text = "View selected";
-            toolTip1.SetToolTip(pbViewImages, "View images");
-            pbViewImages.UseVisualStyleBackColor = true;
-            pbViewImages.Click += pbViewImages_Click;
             // 
             // docxImageDataGridViewTextBoxColumn
             // 
@@ -292,6 +280,19 @@
             okToApplyDataGridViewCheckBoxColumn.HeaderText = "Ok To Apply";
             okToApplyDataGridViewCheckBoxColumn.Name = "okToApplyDataGridViewCheckBoxColumn";
             okToApplyDataGridViewCheckBoxColumn.ToolTipText = "Deslect to prevent this replacement";
+            // 
+            // pbViewImages
+            // 
+            pbViewImages.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbViewImages.Font = new Font("Segoe UI", 18F);
+            pbViewImages.Location = new Point(738, 330);
+            pbViewImages.Name = "pbViewImages";
+            pbViewImages.Size = new Size(199, 111);
+            pbViewImages.TabIndex = 17;
+            pbViewImages.Text = "View selected";
+            toolTip1.SetToolTip(pbViewImages, "View images");
+            pbViewImages.UseVisualStyleBackColor = true;
+            pbViewImages.Click += pbViewImages_Click;
             // 
             // Form1
             // 

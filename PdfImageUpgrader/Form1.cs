@@ -158,7 +158,15 @@ namespace PdfImageUpgrader
         {
             try
             {
-                throw new NotImplementedException();
+                if (dgMediaFiles.SelectedRows.Count == 0)
+                    return;
+                int vicIx = dgMediaFiles.SelectedRows[0].Index;
+                //MediaFile victim = dgMediaFiles.SelectedRows[0].DataBoundItem as MediaFile;
+                //if (victim == null)
+                //    return;
+                ImageCompareForm icf =
+                    new ImageCompareForm(){MediaFiles = _project.MediaFiles, MediaIx = vicIx}.Init();
+                icf.Show(this);
             }
             catch (Exception ex)
             {
