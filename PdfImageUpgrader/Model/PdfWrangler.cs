@@ -14,7 +14,7 @@ using iText.IO.Image;
 
 namespace PdfImageUpgrader.Model
 {
-    internal class PdfWrangler
+    public class PdfWrangler
     {
         public string InputPdf { get; set; }
         public string OutputPdf { get; set; }
@@ -213,7 +213,7 @@ namespace PdfImageUpgrader.Model
 
     }
 
-    internal class PdfImage
+    public class PdfImage
     {
         public static int MinPixels = 1000;
 
@@ -224,6 +224,7 @@ namespace PdfImageUpgrader.Model
         public float Height { get; set; }
         public string Name { get; set; }
         public string ImageFilePath { get; set; }
+        public string ImageFileName => ImageFilePath == null ? "" : Path.GetFileName(ImageFilePath);
 
         public float Aspect => Height == 0 ? 0 : Width / Height;
         //public byte ObjectType { get; set; }

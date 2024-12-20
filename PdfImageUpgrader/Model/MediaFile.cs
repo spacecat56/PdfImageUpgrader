@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace PdfImageUpgrader.Model
 {
-    internal class MediaFile(FileInfo f)
+    public class MediaFile(FileInfo f)
     {
         public static Regex SeqNoRex = new Regex(@".*?image(?<nbr>\d+)[.].+");
         public FileInfo TheFile { get; set; } = f;
         public int SortNo { get; private set; }
         public bool OkToApply { get; set; }
         public PdfImage Target { get; set; }
+        public string DocxImage => TheFile.Name;
+        public int TargetPage => Target?.Page ?? 0;
+        public string ImageToReplace => Target?.ImageFileName;
 
         public string Name => TheFile.Name;
 
@@ -49,7 +52,7 @@ namespace PdfImageUpgrader.Model
         }
     }
 
-    internal class MediaFiles : List<MediaFile>
+    public class MediaFiles : List<MediaFile>
     {
         public MediaFiles(DirectoryInfo mediaDir)
         {

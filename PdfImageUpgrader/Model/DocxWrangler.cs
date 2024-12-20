@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PdfImageUpgrader.Model
 {
-    internal class DocxWrangler
+    public class DocxWrangler
     {
         public string InputPath { get; set; }
         public string MediaPath { get; set; }

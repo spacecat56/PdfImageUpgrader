@@ -8,7 +8,7 @@ using System.Threading.Tasks.Sources;
 
 namespace PdfImageUpgrader.Model
 {
-    internal class MediaUpgradeProject
+    public class MediaUpgradeProject
     {
         public string InputDocx { get; set; }
         public string InputPdf { get; set; }

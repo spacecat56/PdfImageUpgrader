@@ -2,7 +2,7 @@
 
 namespace PdfImageUpgrader.Model
 {
-    internal class ImageComparator
+    public class ImageComparator
     {
         public double MatchCutoff { get; set; } = 0.1;
         public ErrorMetric Metric { get; set; } = ErrorMetric.Fuzz;

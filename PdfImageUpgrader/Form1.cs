@@ -133,6 +133,7 @@ namespace PdfImageUpgrader
                 Log(result);
                 if (!LogDiagnosticInfo) return;
                 Log(_project.PdfWrangler.DiagnosticInfo.ToString());
+                bsMediaFiles.DataSource = _project.MediaFiles;
             }
             catch (Exception ex)
             {
@@ -147,6 +148,17 @@ namespace PdfImageUpgrader
                 _project.OutputPdf = tePathPdfOut.Text;
                 string result = _project.UpgradePdf();
                 Log(result);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex);
+            }
+        }
+        private void pbViewImages_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                throw new NotImplementedException();
             }
             catch (Exception ex)
             {
@@ -177,5 +189,6 @@ namespace PdfImageUpgrader
             string s = $"{DateTime.Now:dd/MM/yy-HH:mm:ss.fff} | {txt}";
             teLog.AppendText(s);
         }
+
     }
 }

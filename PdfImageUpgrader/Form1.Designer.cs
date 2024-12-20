@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             teLog = new TextBox();
             label1 = new Label();
             tePathDocx = new TextBox();
@@ -44,16 +46,27 @@
             pbExtractDocxMedia = new Button();
             pbLocatePdfImages = new Button();
             pbUpgradePdfImages = new Button();
+            bsMediaFiles = new BindingSource(components);
+            dgMediaFiles = new DataGridView();
+            pbViewImages = new Button();
+            toolTip1 = new ToolTip(components);
+            docxImageDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            targetPageDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            imageToReplaceDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            ImageMetric = new DataGridViewTextBoxColumn();
+            okToApplyDataGridViewCheckBoxColumn = new DataGridViewCheckBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)bsMediaFiles).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgMediaFiles).BeginInit();
             SuspendLayout();
             // 
             // teLog
             // 
             teLog.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            teLog.Location = new Point(13, 335);
+            teLog.Location = new Point(13, 591);
             teLog.Multiline = true;
             teLog.Name = "teLog";
             teLog.ScrollBars = ScrollBars.Vertical;
-            teLog.Size = new Size(855, 327);
+            teLog.Size = new Size(924, 453);
             teLog.TabIndex = 0;
             // 
             // label1
@@ -70,14 +83,14 @@
             tePathDocx.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tePathDocx.Location = new Point(137, 34);
             tePathDocx.Name = "tePathDocx";
-            tePathDocx.Size = new Size(680, 27);
+            tePathDocx.Size = new Size(749, 27);
             tePathDocx.TabIndex = 2;
             tePathDocx.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03.docx";
             // 
             // pbPickDocx
             // 
             pbPickDocx.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pbPickDocx.Location = new Point(827, 34);
+            pbPickDocx.Location = new Point(896, 34);
             pbPickDocx.Name = "pbPickDocx";
             pbPickDocx.Size = new Size(41, 27);
             pbPickDocx.TabIndex = 3;
@@ -88,7 +101,7 @@
             // pbPickPdfIn
             // 
             pbPickPdfIn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pbPickPdfIn.Location = new Point(827, 67);
+            pbPickPdfIn.Location = new Point(896, 67);
             pbPickPdfIn.Name = "pbPickPdfIn";
             pbPickPdfIn.Size = new Size(41, 27);
             pbPickPdfIn.TabIndex = 6;
@@ -101,7 +114,7 @@
             tePathPdfIn.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tePathPdfIn.Location = new Point(137, 67);
             tePathPdfIn.Name = "tePathPdfIn";
-            tePathPdfIn.Size = new Size(680, 27);
+            tePathPdfIn.Size = new Size(749, 27);
             tePathPdfIn.TabIndex = 5;
             tePathPdfIn.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03.pdf";
             // 
@@ -117,7 +130,7 @@
             // pbPickMediaDir
             // 
             pbPickMediaDir.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pbPickMediaDir.Location = new Point(827, 100);
+            pbPickMediaDir.Location = new Point(896, 100);
             pbPickMediaDir.Name = "pbPickMediaDir";
             pbPickMediaDir.Size = new Size(41, 27);
             pbPickMediaDir.TabIndex = 9;
@@ -130,7 +143,7 @@
             tePathMediaTemp.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tePathMediaTemp.Location = new Point(137, 100);
             tePathMediaTemp.Name = "tePathMediaTemp";
-            tePathMediaTemp.Size = new Size(680, 27);
+            tePathMediaTemp.Size = new Size(749, 27);
             tePathMediaTemp.TabIndex = 8;
             tePathMediaTemp.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\Media";
             // 
@@ -146,7 +159,7 @@
             // pbPickPdfOut
             // 
             pbPickPdfOut.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pbPickPdfOut.Location = new Point(827, 133);
+            pbPickPdfOut.Location = new Point(896, 133);
             pbPickPdfOut.Name = "pbPickPdfOut";
             pbPickPdfOut.Size = new Size(41, 27);
             pbPickPdfOut.TabIndex = 12;
@@ -159,7 +172,7 @@
             tePathPdfOut.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tePathPdfOut.Location = new Point(137, 133);
             tePathPdfOut.Name = "tePathPdfOut";
-            tePathPdfOut.Size = new Size(680, 27);
+            tePathPdfOut.Size = new Size(749, 27);
             tePathPdfOut.TabIndex = 11;
             tePathPdfOut.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03_upgraded.pdf";
             // 
@@ -198,19 +211,95 @@
             // 
             pbUpgradePdfImages.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pbUpgradePdfImages.Font = new Font("Segoe UI", 18F);
-            pbUpgradePdfImages.Location = new Point(607, 193);
+            pbUpgradePdfImages.Location = new Point(738, 457);
             pbUpgradePdfImages.Name = "pbUpgradePdfImages";
-            pbUpgradePdfImages.Size = new Size(261, 112);
+            pbUpgradePdfImages.Size = new Size(202, 112);
             pbUpgradePdfImages.TabIndex = 15;
-            pbUpgradePdfImages.Text = "Upgrade  pdf Images";
+            pbUpgradePdfImages.Text = "Upgrade pdf Images";
             pbUpgradePdfImages.UseVisualStyleBackColor = true;
             pbUpgradePdfImages.Click += pbUpgradePdfImages_Click;
+            // 
+            // bsMediaFiles
+            // 
+            bsMediaFiles.DataSource = typeof(Model.MediaFiles);
+            // 
+            // dgMediaFiles
+            // 
+            dgMediaFiles.AllowUserToAddRows = false;
+            dgMediaFiles.AllowUserToDeleteRows = false;
+            dgMediaFiles.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgMediaFiles.AutoGenerateColumns = false;
+            dgMediaFiles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgMediaFiles.Columns.AddRange(new DataGridViewColumn[] { docxImageDataGridViewTextBoxColumn, targetPageDataGridViewTextBoxColumn, imageToReplaceDataGridViewTextBoxColumn, ImageMetric, okToApplyDataGridViewCheckBoxColumn });
+            dgMediaFiles.DataSource = bsMediaFiles;
+            dgMediaFiles.Location = new Point(13, 330);
+            dgMediaFiles.Name = "dgMediaFiles";
+            dgMediaFiles.Size = new Size(716, 239);
+            dgMediaFiles.TabIndex = 16;
+            // 
+            // pbViewImages
+            // 
+            pbViewImages.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbViewImages.Font = new Font("Segoe UI", 18F);
+            pbViewImages.Location = new Point(738, 330);
+            pbViewImages.Name = "pbViewImages";
+            pbViewImages.Size = new Size(199, 111);
+            pbViewImages.TabIndex = 17;
+            pbViewImages.Text = "View selected";
+            toolTip1.SetToolTip(pbViewImages, "View images");
+            pbViewImages.UseVisualStyleBackColor = true;
+            pbViewImages.Click += pbViewImages_Click;
+            // 
+            // docxImageDataGridViewTextBoxColumn
+            // 
+            docxImageDataGridViewTextBoxColumn.DataPropertyName = "DocxImage";
+            docxImageDataGridViewTextBoxColumn.HeaderText = "Docx Image";
+            docxImageDataGridViewTextBoxColumn.Name = "docxImageDataGridViewTextBoxColumn";
+            docxImageDataGridViewTextBoxColumn.ReadOnly = true;
+            docxImageDataGridViewTextBoxColumn.Width = 120;
+            // 
+            // targetPageDataGridViewTextBoxColumn
+            // 
+            targetPageDataGridViewTextBoxColumn.DataPropertyName = "TargetPage";
+            targetPageDataGridViewTextBoxColumn.HeaderText = "Target Page";
+            targetPageDataGridViewTextBoxColumn.Name = "targetPageDataGridViewTextBoxColumn";
+            targetPageDataGridViewTextBoxColumn.ReadOnly = true;
+            targetPageDataGridViewTextBoxColumn.Width = 120;
+            // 
+            // imageToReplaceDataGridViewTextBoxColumn
+            // 
+            imageToReplaceDataGridViewTextBoxColumn.DataPropertyName = "ImageToReplace";
+            imageToReplaceDataGridViewTextBoxColumn.HeaderText = "Image To Replace";
+            imageToReplaceDataGridViewTextBoxColumn.Name = "imageToReplaceDataGridViewTextBoxColumn";
+            imageToReplaceDataGridViewTextBoxColumn.ReadOnly = true;
+            imageToReplaceDataGridViewTextBoxColumn.Width = 180;
+            // 
+            // ImageMetric
+            // 
+            ImageMetric.DataPropertyName = "ImageMetric";
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N3";
+            dataGridViewCellStyle1.NullValue = null;
+            ImageMetric.DefaultCellStyle = dataGridViewCellStyle1;
+            ImageMetric.HeaderText = "Image Metric";
+            ImageMetric.Name = "ImageMetric";
+            ImageMetric.ReadOnly = true;
+            ImageMetric.Width = 120;
+            // 
+            // okToApplyDataGridViewCheckBoxColumn
+            // 
+            okToApplyDataGridViewCheckBoxColumn.DataPropertyName = "OkToApply";
+            okToApplyDataGridViewCheckBoxColumn.HeaderText = "Ok To Apply";
+            okToApplyDataGridViewCheckBoxColumn.Name = "okToApplyDataGridViewCheckBoxColumn";
+            okToApplyDataGridViewCheckBoxColumn.ToolTipText = "Deslect to prevent this replacement";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(883, 681);
+            ClientSize = new Size(952, 1063);
+            Controls.Add(pbViewImages);
+            Controls.Add(dgMediaFiles);
             Controls.Add(pbUpgradePdfImages);
             Controls.Add(pbLocatePdfImages);
             Controls.Add(pbExtractDocxMedia);
@@ -231,6 +320,8 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             Text = "PDF Image Upgrader";
+            ((System.ComponentModel.ISupportInitialize)bsMediaFiles).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgMediaFiles).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -253,5 +344,15 @@
         private Button pbExtractDocxMedia;
         private Button pbLocatePdfImages;
         private Button pbUpgradePdfImages;
+        private BindingSource bsMediaFiles;
+        private DataGridView dgMediaFiles;
+        private Button pbViewImages;
+        private ToolTip toolTip1;
+        private DataGridViewTextBoxColumn imageMetricDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn docxImageDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn targetPageDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn imageToReplaceDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn ImageMetric;
+        private DataGridViewCheckBoxColumn okToApplyDataGridViewCheckBoxColumn;
     }
 }
