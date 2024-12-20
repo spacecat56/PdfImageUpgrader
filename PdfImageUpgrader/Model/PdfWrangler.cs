@@ -20,16 +20,20 @@ namespace PdfImageUpgrader.Model
         public string OutputPdf { get; set; }
 
         public List<PdfImage> Images { get; } = [];
-
+        public StringBuilder DiagnosticInfo { get; set; } = new();
         public int LocateImages()
         {
             Images.Clear();
+            DiagnosticInfo.Clear();
 
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(InputPdf));
-            //Document document = new Document(pdfDoc);
             Rectangle pageSize;
             PdfCanvas canvas;
+            
             int n = pdfDoc.GetNumberOfPages();
+            
+            DiagnosticInfo.AppendLine($"***Begin Info for {Path.GetFileName(InputPdf)}; {n} pages");
+
             for (int i = 1; i <= n; i++)
             {
                 PdfPage page = pdfDoc.GetPage(i);
@@ -38,11 +42,10 @@ namespace PdfImageUpgrader.Model
                 PdfDictionary xObjects = resources.GetAsDictionary(PdfName.XObject);
                 if (xObjects == null)
                     continue;
+                DiagnosticInfo.AppendLine($"....page {i}");
                 int ix = 0;
                 foreach (PdfName xObject in xObjects.KeySet())
                 {
-                    //if (xObject.GetObjectType() != 9)
-                    //    continue;
                     ix++;
                     PdfStream stream = xObjects.GetAsStream(xObject);
                     PdfImageXObject img = new PdfImageXObject(stream);
@@ -55,13 +58,9 @@ namespace PdfImageUpgrader.Model
                         Width = img.GetWidth(),
                         Height = img.GetHeight(),
                         IndexOnPage = ix
-                        //ObjectType = xObject.GetObjectType()
                     });
+                    DiagnosticInfo.AppendLine($"........{Images.Count}. {xObject.GetValue()}. w={img.GetWidth()}, h={img.GetHeight()}; type={img.IdentifyImageType()}");
                 }
-                //PdfName imgRef = xObjects.KeySet().First();
-                //pageSize = page.GetPageSize();
-                //canvas = new PdfCanvas(page);
-                ////Draw header text
             }
             pdfDoc.Close();
 

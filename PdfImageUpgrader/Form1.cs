@@ -6,6 +6,7 @@ namespace PdfImageUpgrader
     {
         private string workingDir;
         private MediaUpgradeProject _project;
+        public bool LogDiagnosticInfo = true;
 
         public Form1()
         {
@@ -130,6 +131,8 @@ namespace PdfImageUpgrader
                 _project.OutputPdf = tePathPdfOut.Text;
                 string result = _project.InitPdf();
                 Log(result);
+                if (!LogDiagnosticInfo) return;
+                Log(_project.PdfWrangler.DiagnosticInfo.ToString());
             }
             catch (Exception ex)
             {
@@ -171,7 +174,7 @@ namespace PdfImageUpgrader
                 return;
             }
 
-            string s = $"{DateTime.Now:dd/mm/yy-HH:mm.fff} | {txt}";
+            string s = $"{DateTime.Now:dd/MM/yy-HH:mm:ss.fff} | {txt}";
             teLog.AppendText(s);
         }
     }
