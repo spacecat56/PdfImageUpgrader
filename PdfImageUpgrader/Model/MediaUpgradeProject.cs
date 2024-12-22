@@ -15,6 +15,7 @@ namespace PdfImageUpgrader.Model
         public string MediaDir { get; set; }
         public string OutputPdf { get; set; }
         public bool Valid { get; private set; }
+        public bool DeleteEmptyTransparency { get; set; } // not implemented yet
 
 
         public DocxWrangler DocxWrangler { get; private set; }
@@ -41,7 +42,8 @@ namespace PdfImageUpgrader.Model
                 InputPdf = InputPdf,
                 OutputPdf = OutputPdf,
                 MediaDir = MediaDir,
-                Comparator = new ImageComparator() // default, with potential to be exposed and configured externally
+                Comparator = new ImageComparator(), // default, with potential to be exposed and configured externally
+                DeleteEmptyTransparency = DeleteEmptyTransparency
             };
 
             int c = PdfWrangler.LocateImages();

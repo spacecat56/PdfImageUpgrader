@@ -7,7 +7,7 @@ namespace PdfImageUpgrader
         private string workingDir;
         private MediaUpgradeProject _project;
         public bool LogDiagnosticInfo = true;
-
+        private bool openedImagesForm;
         public Form1()
         {
             InitializeComponent();
@@ -55,7 +55,7 @@ namespace PdfImageUpgrader
                 if (ofd.ShowDialog() != DialogResult.OK)
                     return;
                 tePathPdfIn.Text = ofd.FileName;
-                tePathPdfOut.Text = Path.ChangeExtension(ofd.FileName, "_upgraded.pdf");
+                tePathPdfOut.Text = Path.ChangeExtension(ofd.FileName, "_upgraded.pdf").Replace("._upgraded","_upgraded");
             }
             catch (Exception ex)
             {
@@ -126,6 +126,8 @@ namespace PdfImageUpgrader
         {
             try
             {
+                Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = true;
+                Application.DoEvents();
                 _project ??= new MediaUpgradeProject();
                 _project.InputPdf = tePathPdfIn.Text;
                 _project.OutputPdf = tePathPdfOut.Text;
@@ -139,12 +141,18 @@ namespace PdfImageUpgrader
             {
                 Notify(ex);
             }
+            finally
+            {
+                Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = false;
+            }
         }
 
         private void pbUpgradePdfImages_Click(object sender, EventArgs e)
         {
             try
             {
+                Application.UseWaitCursor = pbUpgradePdfImages.UseWaitCursor = true;
+                Application.DoEvents();
                 _project.OutputPdf = tePathPdfOut.Text;
                 string result = _project.UpgradePdf();
                 Log(result);
@@ -153,20 +161,23 @@ namespace PdfImageUpgrader
             {
                 Notify(ex);
             }
+            finally
+            {
+                Application.UseWaitCursor = pbUpgradePdfImages.UseWaitCursor = false;
+            }
         }
         private void pbViewImages_Click(object sender, EventArgs e)
         {
             try
             {
-                if (dgMediaFiles.SelectedRows.Count == 0)
-                    return;
-                int vicIx = dgMediaFiles.SelectedRows[0].Index;
-                //MediaFile victim = dgMediaFiles.SelectedRows[0].DataBoundItem as MediaFile;
-                //if (victim == null)
-                //    return;
+                if ((_project.MediaFiles?.Count ?? 0) == 0) return;
+                int vicIx = (dgMediaFiles.SelectedRows.Count == 0)
+                    ? 0 
+                    : dgMediaFiles.SelectedRows[0].Index;
                 ImageCompareForm icf =
-                    new ImageCompareForm(){MediaFiles = _project.MediaFiles, MediaIx = vicIx}.Init();
+                    new ImageCompareForm() { MediaFiles = _project.MediaFiles, MediaIx = vicIx }.Init();
                 icf.Show(this);
+                openedImagesForm = true;
             }
             catch (Exception ex)
             {
@@ -186,8 +197,12 @@ namespace PdfImageUpgrader
             Log(s);
             MessageBox.Show(s, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
         }
+
         private void Log(string txt)
         {
+            if (string.IsNullOrWhiteSpace(txt))
+                return;
+
             if (InvokeRequired)
             {
                 Invoke(delegate { Log(txt); });
@@ -196,7 +211,17 @@ namespace PdfImageUpgrader
 
             string s = $"{DateTime.Now:dd/MM/yy-HH:mm:ss.fff} | {txt}";
             teLog.AppendText(s);
+            if (!s.EndsWith(Environment.NewLine))
+                teLog.AppendText(Environment.NewLine);
         }
 
+        private void Form1_Activated(object sender, EventArgs e)
+        {
+            // since we are not using a binding-aware collection 
+            // we need to make sure that changes made on the image compare form
+            // show up here
+            if (!openedImagesForm) return;
+            bsMediaFiles.ResetBindings(false);
+        }
     }
 }

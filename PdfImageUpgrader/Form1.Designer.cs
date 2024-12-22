@@ -321,6 +321,7 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             Text = "PDF Image Upgrader";
+            Activated += Form1_Activated;
             ((System.ComponentModel.ISupportInitialize)bsMediaFiles).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgMediaFiles).EndInit();
             ResumeLayout(false);

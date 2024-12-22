@@ -20,7 +20,7 @@ namespace PdfImageUpgrader.Model
         public string OutputPdf { get; set; }
         public string MediaDir { get; set; }
         public ImageComparator Comparator { get; set; }
-
+        public bool DeleteEmptyTransparency { get; set; }
         public List<PdfImage> Images { get; } = [];
         public StringBuilder DiagnosticInfo { get; set; } = new();
         public int LocateImages()

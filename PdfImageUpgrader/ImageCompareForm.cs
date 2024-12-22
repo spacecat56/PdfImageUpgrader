@@ -49,7 +49,7 @@ namespace PdfImageUpgrader
 
         private void pbPrior_Click(object sender, EventArgs e)
         {
-            ShowFiles(1);
+            ShowFiles(-1);
         }
     }
 }
