@@ -129,35 +129,50 @@ namespace PdfImageUpgrader.Model
             bool rvb = false;
             rvs ??= new StringBuilder();
 
+            // make a list of unassigned images in the pdf
+            // which will be reduced as we make matches
+            List<PdfImage> unmatched = [];
+            unmatched.AddRange(Images);
+
             int ixPdfImage = 0;
             for (int i = 0; i < medias.Count; i++)
             {
                 MediaFile mf = medias[i];
                 mf.Target = null;
                 mf.OkToApply = false;
+                mf.ImageMetric = 0;
                 rvs.AppendLine($"Media file {mf.Name} {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
 
-                while (ixPdfImage < Images.Count)
+                string infoLine = null;
+                foreach (PdfImage pim in unmatched)
                 {
-                    PdfImage pim = Images[ixPdfImage];
                     float rel = mf.GetSize().Width / pim.Width;
-                    (bool isMatch, double delta) = Comparator.Compare(pim.ImageFilePath, mf.TheFile.FullName);
-                    if (!isMatch)
-                    {
-                        ixPdfImage++;
+                    (bool isMatch, bool isModMatch, double delta) = Comparator.Compare(pim.ImageFilePath, mf.TheFile.FullName);
+                    if (!isMatch && !isModMatch)
                         continue;
-                    }
+                    // pick the best mod-match... 
+                    if (isModMatch && mf.Target != null && delta >= mf.ImageMetric)
+                        continue;
+
                     mf.Target = pim;
                     mf.ImageMetric = delta;
+                    string prefix = isModMatch ? "Possibly mod version of " : "";
+                    infoLine = ($"\t{prefix}PDF image p. {pim.Page}, {pim.Name} {pim.Width:0.0}x{pim.Height:0.0} AR {pim.Aspect}: Upgrade res: {rel:0.##}");
+                    if (!isMatch)
+                        continue;
+                    rvs.AppendLine(infoLine);
+                    infoLine = null;
                     rvb = mf.OkToApply = true; // any found == ok
-                    rvs.AppendLine($"\tPDF image p. {pim.Page}, {pim.Name} {pim.Width:0.0}x{pim.Height:0.0} AR {pim.Aspect}: Upgrade res: {rel:0.##}");
-                    ixPdfImage++;
                     break;
                 }
 
+                // leave near-matches in the list for possible later exact match
+                if (mf.Target!=null && mf.OkToApply) 
+                    unmatched.Remove(mf.Target);
+
                 if (!mf.OkToApply)
                 {
-                    rvs.AppendLine($"\tNo match in pdf");
+                    rvs.AppendLine(mf.Target==null?"\tNo match in pdf":infoLine);
                     rvb = mf.OkToApply = false;
                 }
 

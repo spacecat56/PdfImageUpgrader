@@ -122,20 +122,24 @@ namespace PdfImageUpgrader
             }
         }
 
-        private void pbLocatePdfImages_Click(object sender, EventArgs e)
+        private async void pbLocatePdfImages_Click(object sender, EventArgs e)
         {
             try
             {
+                // NB gross defect this cannot be made to work!
                 Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = true;
                 Application.DoEvents();
+               
                 _project ??= new MediaUpgradeProject();
                 _project.InputPdf = tePathPdfIn.Text;
                 _project.OutputPdf = tePathPdfOut.Text;
+
                 string result = _project.InitPdf();
                 Log(result);
+                bsMediaFiles.DataSource = _project.MediaFiles;
+
                 if (!LogDiagnosticInfo) return;
                 Log(_project.PdfWrangler.DiagnosticInfo.ToString());
-                bsMediaFiles.DataSource = _project.MediaFiles;
             }
             catch (Exception ex)
             {

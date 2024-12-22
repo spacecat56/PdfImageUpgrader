@@ -42,7 +42,7 @@ namespace PdfImageUpgrader.Model
                 InputPdf = InputPdf,
                 OutputPdf = OutputPdf,
                 MediaDir = MediaDir,
-                Comparator = new ImageComparator(), // default, with potential to be exposed and configured externally
+                Comparator = new ImageComparator(), // defaults, with potential to be exposed and configured externally
                 DeleteEmptyTransparency = DeleteEmptyTransparency
             };
 
