@@ -33,7 +33,7 @@ namespace PdfImageUpgrader
 
                 MediaFile victim = MediaFiles[MediaIx];
                 ibNew.ImageLocation = victim.TheFile.FullName;
-                ibOld.ImageLocation = victim.Target.ImageFilePath;
+                ibOld.ImageLocation = victim.Target?.ImageFilePath;
                 bsMediaFile.DataSource = victim;
             }
             catch (Exception ex)

@@ -23,6 +23,7 @@ namespace PdfImageUpgrader.Model
         public bool DeleteEmptyTransparency { get; set; }
         public List<PdfImage> Images { get; } = [];
         public StringBuilder DiagnosticInfo { get; set; } = new();
+        public bool CancelRequested { get; set; }
         public int LocateImages()
         {
             Images.Clear();
@@ -137,6 +138,11 @@ namespace PdfImageUpgrader.Model
             int ixPdfImage = 0;
             for (int i = 0; i < medias.Count; i++)
             {
+                if (CancelRequested)
+                {
+                    rvs.AppendLine("***Terminated by Cancel request");
+                    return (rvb, rvs);
+                }
                 MediaFile mf = medias[i];
                 mf.Target = null;
                 mf.OkToApply = false;
@@ -188,40 +194,50 @@ namespace PdfImageUpgrader.Model
 
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(InputPdf), new PdfWriter(OutputPdf));
 
-            for (int i = 0; i < medias.Count; i++)
+            try
             {
-                MediaFile mf = medias[i];
-                rvs.AppendLine($"Media file {mf.Name}; {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
-
-                bool goodToGo = mf.OkToApply && mf.Target != null;
-                if (!goodToGo)
+                foreach (MediaFile mf in medias)
                 {
-                    rvs.AppendLine("...skipped");
-                    continue;
+                    if (CancelRequested)
+                    {
+                        rvs.AppendLine("***Terminated by Cancel request");
+                        return (upg, rvs);
+                    }
+
+                    rvs.AppendLine($"Media file {mf.Name}; {mf.GetSize().Width:0.0}x{mf.GetSize().Height:0.0} AR {mf.Aspect()}");
+
+                    bool goodToGo = mf.OkToApply && mf.Target != null;
+                    if (!goodToGo)
+                    {
+                        rvs.AppendLine("...skipped");
+                        continue;
+                    }
+
+                    PdfImage pim = mf.Target; //Images[i];
+                    PdfPage page = pdfDoc.GetPage(pim.Page);
+                    PdfDictionary pageDict = page.GetPdfObject();
+                    PdfDictionary resources = pageDict.GetAsDictionary(PdfName.Resources);
+                    PdfDictionary xObjects = resources.GetAsDictionary(PdfName.XObject);
+                    PdfName imgRef = xObjects.KeySet().ElementAt(pim.IndexOnPage-1);
+
+                    ImageData imd = ImageDataFactory.Create(mf.TheFile.FullName);
+                    Image img = new Image(imd);
+                    PdfStream stream = xObjects.GetAsStream(imgRef);
+                    xObjects.Put(imgRef, img.GetXObject().GetPdfObject());
+
+
+                    float rel = mf.GetSize().Width / pim.Width;
+                    bool goodAr = Math.Abs(mf.Aspect() - pim.Aspect) < 0.002f;
+                    upg++;
+                    rvs.AppendLine($"\tPDF image p. {pim.Page}, {pim.Name} Replaced; Upgrade res by {rel:0.##} times");
                 }
 
-                PdfImage pim = mf.Target; //Images[i];
-                PdfPage page = pdfDoc.GetPage(pim.Page);
-                PdfDictionary pageDict = page.GetPdfObject();
-                PdfDictionary resources = pageDict.GetAsDictionary(PdfName.Resources);
-                PdfDictionary xObjects = resources.GetAsDictionary(PdfName.XObject);
-                PdfName imgRef = xObjects.KeySet().ElementAt(pim.IndexOnPage-1);
-
-                ImageData imd = ImageDataFactory.Create(mf.TheFile.FullName);
-                Image img = new Image(imd);
-                PdfStream stream = xObjects.GetAsStream(imgRef);
-                xObjects.Put(imgRef, img.GetXObject().GetPdfObject());
-
-
-                float rel = mf.GetSize().Width / pim.Width;
-                bool goodAr = Math.Abs(mf.Aspect() - pim.Aspect) < 0.002f;
-                upg++;
-                rvs.AppendLine($"\tPDF image p. {pim.Page}, {pim.Name} Replaced; Upgrade res by {rel:0.##} times");
+                return (upg, rvs);
             }
-
-            pdfDoc.Close();
-
-            return (upg, rvs);
+            finally
+            {
+                pdfDoc.Close();
+            }
 
         }
 

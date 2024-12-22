@@ -11,6 +11,29 @@ namespace PdfImageUpgrader
         public Form1()
         {
             InitializeComponent();
+            lockables = new List<Control>()
+            {
+                tePathPdfIn, tePathDocx, tePathMediaTemp, tePathPdfOut,
+                pbLocatePdfImages, pbExtractDocxMedia, pbPickDocx, pbPickMediaDir,
+                pbPickPdfIn, pbPickPdfOut, pbUpgradePdfImages, pbViewImages,
+            };
+        }
+
+        private List<Control> lockables;
+
+        private void ToggleUI(bool ena, Control except)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(delegate { ToggleUI(ena, except); });
+                return;
+            }
+
+            foreach (Control c in lockables)
+            {
+                if (c == except) continue;
+                c.Enabled = ena;
+            }
         }
 
         private void pbPickDocx_Click(object sender, EventArgs e)
@@ -122,21 +145,21 @@ namespace PdfImageUpgrader
             }
         }
 
-        private async void pbLocatePdfImages_Click(object sender, EventArgs e)
+        private void PostProcessLocate(string txt)
         {
+            if (InvokeRequired)
+            {
+                Invoke(delegate { PostProcessLocate(txt); });
+                return;
+            }
             try
             {
-                // NB gross defect this cannot be made to work!
-                Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = true;
-                Application.DoEvents();
-               
-                _project ??= new MediaUpgradeProject();
-                _project.InputPdf = tePathPdfIn.Text;
-                _project.OutputPdf = tePathPdfOut.Text;
-
-                string result = _project.InitPdf();
-                Log(result);
-                bsMediaFiles.DataSource = _project.MediaFiles;
+                Log("FINISH locate pdf images");
+                Log(txt);
+                if (bsMediaFiles.DataSource == _project.MediaFiles)
+                    bsMediaFiles.ResetBindings(false);
+                else
+                    bsMediaFiles.DataSource = _project.MediaFiles;
 
                 if (!LogDiagnosticInfo) return;
                 Log(_project.PdfWrangler.DiagnosticInfo.ToString());
@@ -147,19 +170,89 @@ namespace PdfImageUpgrader
             }
             finally
             {
-                Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = false;
+                pbLocatePdfImages.Text = "Locate pdf Images";
+                ToggleUI(true, null);
+                Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = dgMediaFiles.UseWaitCursor = false;
             }
         }
 
-        private void pbUpgradePdfImages_Click(object sender, EventArgs e)
+
+        private async void pbLocatePdfImages_Click(object sender, EventArgs e)
         {
             try
             {
+                if (pbLocatePdfImages.Text == "Cancel")
+                {
+                    Log("Cancel requested");
+                    _project.PdfWrangler.CancelRequested = true;
+                    return;
+                }
+
+                Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = true;
+                Application.DoEvents();
+                pbLocatePdfImages.Text = "Cancel";
+                ToggleUI(false, pbLocatePdfImages);
+
+                _project ??= new MediaUpgradeProject();
+                _project.InputPdf = tePathPdfIn.Text;
+                _project.OutputPdf = tePathPdfOut.Text;
+
+                Log("BEGIN locate pdf images");
+                await Task.Run(() => _project.InitPdf()).ContinueWith(t => PostProcessLocate(t.Result));
+            }
+            catch (Exception ex)
+            {
+                pbLocatePdfImages.Text = "Locate pdf Images";
+                ToggleUI(true, null);
+                Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = false;
+                Notify(ex);
+            }
+        }
+
+        private void PostProcessUpgrade(string txt)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(delegate { PostProcessUpgrade(txt); });
+                return;
+            }
+
+            try
+            {
+                Log("FINISH upgrade pdf images");
+                Log(txt);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex);
+            }
+            finally
+            {
+                pbUpgradePdfImages.Text = "Upgrade pdf Images";
+                ToggleUI(true, null);
+                Application.UseWaitCursor = pbUpgradePdfImages.UseWaitCursor = dgMediaFiles.UseWaitCursor = false;
+            }
+        }
+
+        private async void pbUpgradePdfImages_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pbUpgradePdfImages.Text == "Cancel")
+                {
+                    Log("Cancel requested");
+                    _project.PdfWrangler.CancelRequested = true;
+                    return;
+                }
+
+                _project.OutputPdf = tePathPdfOut.Text;
+                pbUpgradePdfImages.Text = "Cancel";
+                ToggleUI(false, pbUpgradePdfImages);
                 Application.UseWaitCursor = pbUpgradePdfImages.UseWaitCursor = true;
                 Application.DoEvents();
-                _project.OutputPdf = tePathPdfOut.Text;
-                string result = _project.UpgradePdf();
-                Log(result);
+
+                Log("BEGIN upgrade pdf images");
+                await Task.Run(() => _project.UpgradePdf()).ContinueWith(t => PostProcessUpgrade(t.Result));
             }
             catch (Exception ex)
             {
