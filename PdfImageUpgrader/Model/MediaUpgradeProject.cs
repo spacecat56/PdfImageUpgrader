@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
+using ImageMagick;
 
 namespace PdfImageUpgrader.Model
 {
@@ -16,7 +17,11 @@ namespace PdfImageUpgrader.Model
         public string OutputPdf { get; set; }
         public bool Valid { get; private set; }
         public bool DeleteEmptyTransparency { get; set; } // not implemented yet
+        public string ErrorMetric { get; set; }
+        public double MatchCutoff { get; set; }
+        public double ModCutoff { get; set; }
 
+        public bool HasMatches() => MediaFiles.FirstOrDefault(x => x.OkToApply) != null;
 
         public DocxWrangler DocxWrangler { get; private set; }
         public MediaFiles MediaFiles { get; private set; }
@@ -42,7 +47,12 @@ namespace PdfImageUpgrader.Model
                 InputPdf = InputPdf,
                 OutputPdf = OutputPdf,
                 MediaDir = MediaDir,
-                Comparator = new ImageComparator(), // defaults, with potential to be exposed and configured externally
+                Comparator = new ImageComparator()
+                {
+                    MatchCutoff = MatchCutoff,
+                    ModifiedCutoff = ModCutoff,
+                    MetricString = ErrorMetric
+                }, 
                 DeleteEmptyTransparency = DeleteEmptyTransparency
             };
 
@@ -55,6 +65,7 @@ namespace PdfImageUpgrader.Model
 
             return rvs.ToString();
         }
+
 
         public string UpgradePdf()
         {

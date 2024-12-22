@@ -1,4 +1,5 @@
 using PdfImageUpgrader.Model;
+using PdfImageUpgrader.Properties;
 
 namespace PdfImageUpgrader
 {
@@ -6,8 +7,8 @@ namespace PdfImageUpgrader
     {
         private string workingDir;
         private MediaUpgradeProject _project;
-        public bool LogDiagnosticInfo = true;
         private bool openedImagesForm;
+        private bool didSomeExtractions;
         public Form1()
         {
             InitializeComponent();
@@ -16,7 +17,9 @@ namespace PdfImageUpgrader
                 tePathPdfIn, tePathDocx, tePathMediaTemp, tePathPdfOut,
                 pbLocatePdfImages, pbExtractDocxMedia, pbPickDocx, pbPickMediaDir,
                 pbPickPdfIn, pbPickPdfOut, pbUpgradePdfImages, pbViewImages,
+                dgMediaFiles
             };
+            BindSettings();
         }
 
         private List<Control> lockables;
@@ -34,6 +37,20 @@ namespace PdfImageUpgrader
                 if (c == except) continue;
                 c.Enabled = ena;
             }
+        }
+
+        private void BindSettings()
+        {
+            Binding b = new Binding("Checked", Properties.Settings.Default, "CleanupOnExit");
+            kbCleanupOnExit.DataBindings.Add(b);
+            b = new Binding("Checked", Properties.Settings.Default, "LogDiagnostics");
+            kbLogDiagnostics.DataBindings.Add(b);
+            b = new Binding("SelectedItem", Properties.Settings.Default, "ComparisonAlgorithm");
+            cbAlgorithm.DataBindings.Add(b);
+            b = new Binding("Value", Properties.Settings.Default, "MatchCutoff");
+            nudMaxMatch.DataBindings.Add(b);
+            b = new Binding("Value", Properties.Settings.Default, "ModCutoff");
+            nudMaxMod.DataBindings.Add(b);
         }
 
         private void pbPickDocx_Click(object sender, EventArgs e)
@@ -78,7 +95,7 @@ namespace PdfImageUpgrader
                 if (ofd.ShowDialog() != DialogResult.OK)
                     return;
                 tePathPdfIn.Text = ofd.FileName;
-                tePathPdfOut.Text = Path.ChangeExtension(ofd.FileName, "_upgraded.pdf").Replace("._upgraded","_upgraded");
+                tePathPdfOut.Text = Path.ChangeExtension(ofd.FileName, "_upgraded.pdf").Replace("._upgraded", "_upgraded");
             }
             catch (Exception ex)
             {
@@ -133,16 +150,25 @@ namespace PdfImageUpgrader
         {
             try
             {
-                _project ??= new MediaUpgradeProject();
-                _project.InputDocx = tePathDocx.Text;
-                _project.MediaDir = tePathMediaTemp.Text;
+                InitProject();
                 string result = _project.ExtractFromDocx();
-                Log(result);
+                Log(result, true);
+                pbLocatePdfImages.Enabled = didSomeExtractions = _project.MediaFiles.Count > 0;
             }
             catch (Exception ex)
             {
                 Notify(ex);
             }
+        }
+
+        private void InitProject()
+        {
+            _project ??= new MediaUpgradeProject();
+            _project.InputDocx = tePathDocx.Text;
+            _project.MediaDir = tePathMediaTemp.Text;
+            _project.ErrorMetric = Settings.Default.ComparisonAlgorithm;
+            _project.MatchCutoff = Settings.Default.MatchCutoff;
+            _project.ModCutoff = Settings.Default.ModCutoff;
         }
 
         private void PostProcessLocate(string txt)
@@ -154,15 +180,18 @@ namespace PdfImageUpgrader
             }
             try
             {
-                Log("FINISH locate pdf images");
+                Log("FINISH locate pdf images", true);
                 Log(txt);
                 if (bsMediaFiles.DataSource == _project.MediaFiles)
                     bsMediaFiles.ResetBindings(false);
                 else
                     bsMediaFiles.DataSource = _project.MediaFiles;
 
-                if (!LogDiagnosticInfo) return;
+                if (!Properties.Settings.Default.LogDiagnostics) return;
                 Log(_project.PdfWrangler.DiagnosticInfo.ToString());
+                pbUpgradePdfImages.Enabled = _project.HasMatches();
+                pbViewImages.Enabled = _project.MediaFiles.Count > 0;
+                didSomeExtractions = true;
             }
             catch (Exception ex)
             {
@@ -175,15 +204,14 @@ namespace PdfImageUpgrader
                 Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = dgMediaFiles.UseWaitCursor = false;
             }
         }
-
-
+        
         private async void pbLocatePdfImages_Click(object sender, EventArgs e)
         {
             try
             {
                 if (pbLocatePdfImages.Text == "Cancel")
                 {
-                    Log("Cancel requested");
+                    Log("Cancel requested", true);
                     _project.PdfWrangler.CancelRequested = true;
                     return;
                 }
@@ -193,11 +221,10 @@ namespace PdfImageUpgrader
                 pbLocatePdfImages.Text = "Cancel";
                 ToggleUI(false, pbLocatePdfImages);
 
-                _project ??= new MediaUpgradeProject();
+                InitProject();
                 _project.InputPdf = tePathPdfIn.Text;
-                _project.OutputPdf = tePathPdfOut.Text;
 
-                Log("BEGIN locate pdf images");
+                Log("BEGIN locate pdf images", true);
                 await Task.Run(() => _project.InitPdf()).ContinueWith(t => PostProcessLocate(t.Result));
             }
             catch (Exception ex)
@@ -219,7 +246,7 @@ namespace PdfImageUpgrader
 
             try
             {
-                Log("FINISH upgrade pdf images");
+                Log("FINISH upgrade pdf images", true);
                 Log(txt);
             }
             catch (Exception ex)
@@ -240,7 +267,7 @@ namespace PdfImageUpgrader
             {
                 if (pbUpgradePdfImages.Text == "Cancel")
                 {
-                    Log("Cancel requested");
+                    Log("Cancel requested", true);
                     _project.PdfWrangler.CancelRequested = true;
                     return;
                 }
@@ -251,7 +278,7 @@ namespace PdfImageUpgrader
                 Application.UseWaitCursor = pbUpgradePdfImages.UseWaitCursor = true;
                 Application.DoEvents();
 
-                Log("BEGIN upgrade pdf images");
+                Log("BEGIN upgrade pdf images", true);
                 await Task.Run(() => _project.UpgradePdf()).ContinueWith(t => PostProcessUpgrade(t.Result));
             }
             catch (Exception ex)
@@ -269,7 +296,7 @@ namespace PdfImageUpgrader
             {
                 if ((_project.MediaFiles?.Count ?? 0) == 0) return;
                 int vicIx = (dgMediaFiles.SelectedRows.Count == 0)
-                    ? 0 
+                    ? 0
                     : dgMediaFiles.SelectedRows[0].Index;
                 ImageCompareForm icf =
                     new ImageCompareForm() { MediaFiles = _project.MediaFiles, MediaIx = vicIx }.Init();
@@ -290,19 +317,20 @@ namespace PdfImageUpgrader
                 return;
             }
 
+            Log($"Exception:{ex.Message}", true);
             string s = $"Unexpected exception: {ex}";
             Log(s);
             MessageBox.Show(s, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
         }
 
-        private void Log(string txt)
+        private void Log(string txt, bool showOnStatus = false)
         {
             if (string.IsNullOrWhiteSpace(txt))
                 return;
 
             if (InvokeRequired)
             {
-                Invoke(delegate { Log(txt); });
+                Invoke(delegate { Log(txt, showOnStatus); });
                 return;
             }
 
@@ -310,6 +338,10 @@ namespace PdfImageUpgrader
             teLog.AppendText(s);
             if (!s.EndsWith(Environment.NewLine))
                 teLog.AppendText(Environment.NewLine);
+            if (!showOnStatus) return;
+            int ix = s.IndexOf("\r\n");
+            if (ix > 0) s = s.Substring(0, ix);
+            slLog.Text = s;
         }
 
         private void Form1_Activated(object sender, EventArgs e)
@@ -319,6 +351,90 @@ namespace PdfImageUpgrader
             // show up here
             if (!openedImagesForm) return;
             bsMediaFiles.ResetBindings(false);
+        }
+
+        private void miReset_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!OptionalDeleteMedia())
+                    return;
+                tePathPdfIn.Text = tePathDocx.Text
+                    = tePathMediaTemp.Text = tePathPdfOut.Text
+                    = "";
+                pbUpgradePdfImages.Enabled = pbViewImages.Enabled = pbLocatePdfImages.Enabled = false;
+                bsMediaFiles.DataSource = new List<MediaFile>();
+                _project = null;
+
+                Log("Reset", true);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex);
+            }
+        }
+
+        private bool OptionalDeleteMedia()
+        {
+            if (!didSomeExtractions
+                || string.IsNullOrWhiteSpace(tePathMediaTemp.Text) 
+                || !Directory.Exists(tePathMediaTemp.Text)) 
+                return true; // ok here
+
+            DialogResult dr = MessageBox.Show("Delete the temp media directory?", "Confirm setting",
+                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (dr == DialogResult.Cancel)
+            {
+                Log("Action Canceled", true);
+                return false;
+            }
+            if (dr == DialogResult.No)
+            {
+                Log("User chose not to delete temp media", true);
+                return true;
+            }
+            Directory.Delete(tePathMediaTemp.Text, true);
+            Log($"Deleted {tePathMediaTemp.Text}", true);
+            return true;
+        }
+
+        private void pbSaveSettings_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Save();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                if (!didSomeExtractions || string.IsNullOrWhiteSpace(tePathMediaTemp.Text) || !Directory.Exists(tePathMediaTemp.Text)) return; // ok here
+                if (!Properties.Settings.Default.CleanupOnExit)
+                    return;
+                DialogResult dr = MessageBox.Show("Delete the temp media directory?", "Confirm setting",
+                    MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (dr == DialogResult.Cancel)
+                {
+                    Log("Exit Canceled", true);
+                    e.Cancel = true;
+                    return;
+                }
+                if (dr == DialogResult.No)
+                {
+                    Log("User chose not to delete temp media");
+                    return;
+                }
+                Directory.Delete(tePathMediaTemp.Text, true);
+                Log($"Deleted {tePathMediaTemp.Text}", true);
+            }
+            catch (Exception ex)
+            {
+                Notify(ex);
+            }
+        }
+
+        private void miExit_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
