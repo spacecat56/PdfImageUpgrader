@@ -204,7 +204,7 @@ namespace PdfImageUpgrader
                 Application.UseWaitCursor = pbLocatePdfImages.UseWaitCursor = dgMediaFiles.UseWaitCursor = false;
             }
         }
-        
+
         private async void pbLocatePdfImages_Click(object sender, EventArgs e)
         {
             try
@@ -377,8 +377,8 @@ namespace PdfImageUpgrader
         private bool OptionalDeleteMedia()
         {
             if (!didSomeExtractions
-                || string.IsNullOrWhiteSpace(tePathMediaTemp.Text) 
-                || !Directory.Exists(tePathMediaTemp.Text)) 
+                || string.IsNullOrWhiteSpace(tePathMediaTemp.Text)
+                || !Directory.Exists(tePathMediaTemp.Text))
                 return true; // ok here
 
             DialogResult dr = MessageBox.Show("Delete the temp media directory?", "Confirm setting",
@@ -435,6 +435,11 @@ namespace PdfImageUpgrader
         private void miExit_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void miAbout_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().ShowDialog(this);
         }
     }
 }

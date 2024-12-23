@@ -117,7 +117,6 @@
             tePathDocx.Name = "tePathDocx";
             tePathDocx.Size = new Size(743, 27);
             tePathDocx.TabIndex = 2;
-            tePathDocx.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03.docx";
             // 
             // pbPickDocx
             // 
@@ -148,7 +147,6 @@
             tePathPdfIn.Name = "tePathPdfIn";
             tePathPdfIn.Size = new Size(743, 27);
             tePathPdfIn.TabIndex = 5;
-            tePathPdfIn.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03.pdf";
             // 
             // label2
             // 
@@ -177,7 +175,6 @@
             tePathMediaTemp.Name = "tePathMediaTemp";
             tePathMediaTemp.Size = new Size(743, 27);
             tePathMediaTemp.TabIndex = 8;
-            tePathMediaTemp.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\Media";
             // 
             // label3
             // 
@@ -206,7 +203,6 @@
             tePathPdfOut.Name = "tePathPdfOut";
             tePathPdfOut.Size = new Size(743, 27);
             tePathPdfOut.TabIndex = 11;
-            tePathPdfOut.Text = "C:\\Users\\shanley\\DocumentsLocal\\_wipLocal\\_testTemp\\ShancurryShanleys___Rev-34j___highCoveragePages_optRev-03_upgraded.pdf";
             // 
             // label4
             // 
@@ -392,9 +388,9 @@
             tabPage3.Controls.Add(pbSaveSettings);
             tabPage3.Controls.Add(kbLogDiagnostics);
             tabPage3.Controls.Add(kbCleanupOnExit);
-            tabPage3.Location = new Point(4, 29);
+            tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(959, 602);
+            tabPage3.Size = new Size(959, 607);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Settings";
             // 
@@ -555,6 +551,7 @@
             miAbout.Name = "miAbout";
             miAbout.Size = new Size(107, 22);
             miAbout.Text = "About";
+            miAbout.Click += miAbout_Click;
             // 
             // Form1
             // 

@@ -12,8 +12,31 @@
 		<SelfContained>true</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<Title>PDF Image Upgrader</Title>
-		<Copyright>Copyrught 2024 West Leitrim Software</Copyright>
+		<Copyright>Copyright 2024 spacecat56</Copyright>
+		<Description>Replace downsampled images in pdf file with full res versions extracted from the original docx file. 
+
+Free software with NO WARRANTY.  Licensed under the GNU AGPL version 3 or later; see https://www.gnu.org/licenses/agpl-3.0.html
+
+Source code and lmited doc on github, at https://github.com/spacecat56/PdfImageUpgrader
+</Description>
+		<PackageProjectUrl></PackageProjectUrl>
+		<RepositoryUrl>https://github.com/spacecat56/PdfImageUpgrader</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<Company> </Company>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Include="..\LICENSE.txt">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
   <ItemGroup>
     <PackageReference Include="itext" Version="9.0.0" />
     <PackageReference Include="itext.bouncy-castle-adapter" Version="9.0.0" />
