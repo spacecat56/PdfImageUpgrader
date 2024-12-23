@@ -87,26 +87,20 @@ namespace PdfImageUpgrader.Model
             {
                 case ImageType.JPEG:
                     return "jpg";
-                    break;
                 case ImageType.PNG:
                     return "png";
-                    break;
                 case ImageType.GIF:
                     return "gif";
-                    break;
                 case ImageType.BMP:
                     return "bmp";
-                    break;
                 case ImageType.TIFF:
                     return "tif";
-                    break;
                 //case ImageType.WMF:
                 //    break;
                 //case ImageType.PS:
                 //    break;
                 case ImageType.JPEG2000:
                     return "jp2";
-                    break;
                 //case ImageType.JBIG2:
                 //    break;
                 //case ImageType.RAW:

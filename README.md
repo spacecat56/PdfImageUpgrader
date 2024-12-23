@@ -44,6 +44,8 @@ The current "free" version of iText is used, and it is GPL, so, PdfImageUpgrader
 
 Prospective users who do not wish to build the program can download the "release", which is just a zip file of a locally published "click once" application.  Unzip the file and run the setup program to install PdfImageUpgrader.
 
+Github is very funny about this, practically hiding the download... click the "tag" under "Releases" near the top right of this page.
+
 ## License Summary
 
 This program is free software.

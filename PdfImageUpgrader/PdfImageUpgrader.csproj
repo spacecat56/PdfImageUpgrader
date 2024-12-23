@@ -17,7 +17,7 @@
 
 Free software with NO WARRANTY.  Licensed under the GNU AGPL version 3 or later; see https://www.gnu.org/licenses/agpl-3.0.html
 
-Source code and lmited doc on github, at https://github.com/spacecat56/PdfImageUpgrader
+Source code and limited doc on github, at https://github.com/spacecat56/PdfImageUpgrader
 </Description>
 		<PackageProjectUrl></PackageProjectUrl>
 		<RepositoryUrl>https://github.com/spacecat56/PdfImageUpgrader</RepositoryUrl>
@@ -26,6 +26,7 @@ Source code and lmited doc on github, at https://github.com/spacecat56/PdfImageU
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<Company> </Company>
+		<AssemblyVersion>1.0.0.5</AssemblyVersion>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Include="..\LICENSE.txt">
