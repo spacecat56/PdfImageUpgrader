@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Sources;
-using ImageMagick;
 
 namespace PdfImageUpgrader.Model
 {
@@ -16,7 +10,6 @@ namespace PdfImageUpgrader.Model
         public string MediaDir { get; set; }
         public string OutputPdf { get; set; }
         public bool Valid { get; private set; }
-        public bool DeleteEmptyTransparency { get; set; } // not implemented yet
         public string ErrorMetric { get; set; }
         public double MatchCutoff { get; set; }
         public double ModCutoff { get; set; }
@@ -53,7 +46,6 @@ namespace PdfImageUpgrader.Model
                     ModifiedCutoff = ModCutoff,
                     MetricString = ErrorMetric
                 }, 
-                DeleteEmptyTransparency = DeleteEmptyTransparency
             };
 
             int c = PdfWrangler.LocateImages();

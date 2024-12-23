@@ -1,15 +1,9 @@
 ﻿using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf;
 using Rectangle = iText.Kernel.Geom.Rectangle;
-using Document = iText.Layout.Document;
 using Image = iText.Layout.Element.Image;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using iText.Kernel.Pdf.Xobject;
-using static iText.Kernel.Pdf.Colorspace.PdfDeviceCs;
 using iText.IO.Image;
 
 namespace PdfImageUpgrader.Model
@@ -20,7 +14,6 @@ namespace PdfImageUpgrader.Model
         public string OutputPdf { get; set; }
         public string MediaDir { get; set; }
         public ImageComparator Comparator { get; set; }
-        public bool DeleteEmptyTransparency { get; set; }
         public List<PdfImage> Images { get; } = [];
         public StringBuilder DiagnosticInfo { get; set; } = new();
         public bool CancelRequested { get; set; }
@@ -41,6 +34,7 @@ namespace PdfImageUpgrader.Model
             {
                 PdfPage page = pdfDoc.GetPage(i);
                 PdfDictionary pageDict = page.GetPdfObject();
+
                 PdfDictionary resources = pageDict.GetAsDictionary(PdfName.Resources);
                 PdfDictionary xObjects = resources.GetAsDictionary(PdfName.XObject);
                 if (xObjects == null)
