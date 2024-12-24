@@ -30,10 +30,6 @@ There are several things that remain very fussy.  Rounding of the image size by 
 
 PdfImageUpgrader **does not** make any changes to the layout of the page in the pdf, it **only** rewrites each matched image stream with the full res image data drawn out of the original Word docx file.  If you allowed any issues with size and rounding in your document, the issue may be better, or worse, or the same after you apply PdfImageUpgrader.
 
-One residual problem in pdf files exported from Word, in some circumstances (such as, removing only some of the cell borders in a table) is that it can add an apparently insignificant form annotation with transparency properties, to a pdf page. POD services may object to this. It is possible to remove these, and incidentally somewhat reduce the size of the pdf file, and preserve the images, using ghostscript.  For example it can be installed in Windows in the Linux subsystem.  As it seems that forms and bookmarks are both Link annotations, it does not seem possible when using this method to keep your bookmarks whilst eliminating the alleged transparency, so, if also using your PDF as an ebook be sure to keep a copy that is not flattened, for that purpose. Here is an example of a command line that may serve to flatten annotations:
-
-`gs -sDEVICE=pdfwrite -dPDFSETTINGS=/default -dNOPAUSE -dPreserveAnnots=false -dBATCH -sOutputFile=outFilename.pdf -f inFileName.pdf`
-
 ## Development environment
 
 PdfImageUpgrader was developed in Visual Studio 2022 Community Edition, using .net 8, c# 9, Winforms, and the iText and Magick libraries. Interested persons should be able to build the application easily in Visual Studio by downloading the project and opening the solution file. 
