@@ -30,6 +30,23 @@ There are several things that remain very fussy.  Rounding of the image size by 
 
 PdfImageUpgrader **does not** make any changes to the layout of the page in the pdf, it **only** rewrites each matched image stream with the full res image data drawn out of the original Word docx file.  If you allowed any issues with size and rounding in your document, the issue may be better, or worse, or the same after you apply PdfImageUpgrader.
 
+## How to use PdfImageUpgrader
+
+When the application is started the only enabled elements on the main tab are the fields and buttons that allow you to select the input docx and pdf files, temp media directory, and output pdf file name.
+
+Once you have set these, buttons enable stepwise to go through the processing.
+
+After you "Extract docx Media" (very fast) and "Locate pdf Images" (may take a few minutes; button changes to "cancel" while busy) you can optionally "View selected" to review the proposed upgrades. Here is an example screenshot:
+
+After you "Upgrade pdf Images" the new pdf file is available for viewing and message is shown in the status bar:
+
+![Main form screenshot](./Screenshots/FinishedUpgradeExample.png)
+
+Here is an exammple of the window that opens to compare images:
+
+![Compare images form screenshot](./Screenshots/CompareFilesExample.jpg)
+
+
 ## Development environment
 
 PdfImageUpgrader was developed in Visual Studio 2022 Community Edition, using .net 8, c# 9, Winforms, and the iText and Magick libraries. Interested persons should be able to build the application easily in Visual Studio by downloading the project and opening the solution file. 
