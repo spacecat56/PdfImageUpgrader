@@ -32,23 +32,29 @@
             splitContainer1 = new SplitContainer();
             ibNew = new PictureBox();
             pnLeftTop = new Panel();
+            pbApply = new Button();
+            cbChoose = new ComboBox();
+            bsChoices = new BindingSource(components);
             checkBox1 = new CheckBox();
+            bsMediaFile = new BindingSource(components);
             pbPrior = new Button();
             pbNext = new Button();
             label1 = new Label();
             ibOld = new PictureBox();
             panel1 = new Panel();
             label2 = new Label();
-            bsMediaFile = new BindingSource(components);
+            toolTip1 = new ToolTip(components);
+            lbNewName = new Label();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ibNew).BeginInit();
             pnLeftTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)bsChoices).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)bsMediaFile).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ibOld).BeginInit();
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)bsMediaFile).BeginInit();
             SuspendLayout();
             // 
             // splitContainer1
@@ -81,6 +87,9 @@
             // 
             // pnLeftTop
             // 
+            pnLeftTop.Controls.Add(lbNewName);
+            pnLeftTop.Controls.Add(pbApply);
+            pnLeftTop.Controls.Add(cbChoose);
             pnLeftTop.Controls.Add(checkBox1);
             pnLeftTop.Controls.Add(pbPrior);
             pnLeftTop.Controls.Add(pbNext);
@@ -91,17 +100,48 @@
             pnLeftTop.Size = new Size(800, 46);
             pnLeftTop.TabIndex = 1;
             // 
+            // pbApply
+            // 
+            pbApply.Enabled = false;
+            pbApply.Location = new Point(403, 6);
+            pbApply.Name = "pbApply";
+            pbApply.Size = new Size(64, 32);
+            pbApply.TabIndex = 5;
+            pbApply.Text = "Apply";
+            pbApply.UseVisualStyleBackColor = true;
+            pbApply.Click += pbApply_Click;
+            // 
+            // cbChoose
+            // 
+            cbChoose.DataSource = bsChoices;
+            cbChoose.DisplayMember = "Name";
+            cbChoose.FormattingEnabled = true;
+            cbChoose.Location = new Point(273, 12);
+            cbChoose.Name = "cbChoose";
+            cbChoose.Size = new Size(121, 23);
+            cbChoose.TabIndex = 4;
+            toolTip1.SetToolTip(cbChoose, "Optially coose (review) a different repalcement");
+            cbChoose.SelectedIndexChanged += cbChoose_SelectedIndexChanged;
+            // 
+            // bsChoices
+            // 
+            bsChoices.DataSource = typeof(Model.MediaFiles);
+            // 
             // checkBox1
             // 
             checkBox1.AutoSize = true;
             checkBox1.DataBindings.Add(new Binding("Checked", bsMediaFile, "OkToApply", true));
             checkBox1.Font = new Font("Segoe UI", 12F);
-            checkBox1.Location = new Point(312, 14);
+            checkBox1.Location = new Point(515, 12);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(166, 25);
+            checkBox1.Size = new Size(75, 25);
             checkBox1.TabIndex = 3;
-            checkBox1.Text = "Enable this upgrade";
+            checkBox1.Text = "Enable";
             checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // bsMediaFile
+            // 
+            bsMediaFile.DataSource = typeof(Model.MediaFile);
             // 
             // pbPrior
             // 
@@ -163,9 +203,15 @@
             label2.TabIndex = 0;
             label2.Text = "Replaces Old Image";
             // 
-            // bsMediaFile
+            // lbNewName
             // 
-            bsMediaFile.DataSource = typeof(Model.MediaFile);
+            lbNewName.AutoSize = true;
+            lbNewName.DataBindings.Add(new Binding("Text", bsMediaFile, "Name", true));
+            lbNewName.Location = new Point(144, 21);
+            lbNewName.Name = "lbNewName";
+            lbNewName.Size = new Size(38, 15);
+            lbNewName.TabIndex = 6;
+            lbNewName.Text = "label3";
             // 
             // ImageCompareForm
             // 
@@ -182,10 +228,11 @@
             ((System.ComponentModel.ISupportInitialize)ibNew).EndInit();
             pnLeftTop.ResumeLayout(false);
             pnLeftTop.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)bsChoices).EndInit();
+            ((System.ComponentModel.ISupportInitialize)bsMediaFile).EndInit();
             ((System.ComponentModel.ISupportInitialize)ibOld).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)bsMediaFile).EndInit();
             ResumeLayout(false);
         }
 
@@ -202,5 +249,10 @@
         private Button pbPrior;
         private CheckBox checkBox1;
         private BindingSource bsMediaFile;
+        private Button pbApply;
+        private ComboBox cbChoose;
+        private ToolTip toolTip1;
+        private BindingSource bsChoices;
+        private Label lbNewName;
     }
 }

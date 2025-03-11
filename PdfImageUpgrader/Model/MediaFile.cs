@@ -19,7 +19,7 @@ namespace PdfImageUpgrader.Model
         public string ImageToReplace => Target?.ImageFileName;
 
         public string Name => TheFile.Name;
-
+ 
         public double ImageMetric { get; set; }
 
         private Size? theSize;

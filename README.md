@@ -36,7 +36,7 @@ When the application is started the only enabled elements on the main tab are th
 
 Once you have set these, buttons enable stepwise to go through the processing.
 
-After you "Extract docx Media" (very fast) and "Locate pdf Images" (may take a few minutes; button changes to "cancel" while busy) you can optionally "View selected" to review the proposed upgrades. Here is an example screenshot:
+After you "Extract docx Media" (very fast) and "Locate pdf Images" (may take a few minutes; button changes to "cancel" while busy) you can optionally "View selected" to review the proposed upgrades. See example screenshot below. If the wrong replacement image was selected, you can use the 'Choose' list (not shown in the illustration) to correct the coice.
 
 After you "Upgrade pdf Images" the new pdf file is available for viewing and message is shown in the status bar:
 
